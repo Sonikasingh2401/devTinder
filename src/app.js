@@ -2,7 +2,7 @@ const express = require("express");
 
 const app = express();
 
-app.get("/user",(req,res)=>{
+/*app.get("/user",(req,res)=>{
     console.log(req.query);
     res.send({firstname: "Sonika", lastname:"Singh"});
 })
@@ -21,10 +21,23 @@ app.post("/user",(req,res)=>{
 app.use("/test",(req,res)=>{
     res.send("Hello from the express- nodejs server - test devtinder");
 })
+    */
 
-app.use("/", (req,res)=>{
-    res.send("This is just an slash page..")
-})
+app.use("/user", (req,res,next)=>{
+    console.log("Handling the routes of /user..")
+    //res.send("This is just an slash page..")
+    next();
+});
+app.use("/user", (req,res,next)=>{
+    console.log("Handling the routes of /user..")
+    //res.send("This is 2nd response..")
+    next();
+});
+app.use("/user", (req,res)=>{
+    console.log("Handling the routes of /user..")
+    res.send("This is 3rd response..")
+});
+
 
 app.listen(4000,()=>{
     console.log("Server is successfully running");
