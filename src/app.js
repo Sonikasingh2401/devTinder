@@ -1,46 +1,40 @@
 const express = require("express");
-
+const connectDB = require('./config.js/database');
 const app = express();
+const User = require('./models/user');
 
-/*app.get("/user",(req,res)=>{
-    console.log(req.query);
-    res.send({firstname: "Sonika", lastname:"Singh"});
-})
-
-app.get("/user/:userId/:name",(req,res)=>{
-    console.log(req.params);
-    res.send({firstname: "Sonika", lastname:"Singh"});
-})
-
-app.post("/user",(req,res)=>{
-    console.log("post call made successfully..")
-    res.send("Data saved successfully.")
-})
-
-
-app.use("/test",(req,res)=>{
-    res.send("Hello from the express- nodejs server - test devtinder");
-})
-    */
-
-app.use("/user", (req,res,next)=>{
-    console.log("Handling the routes of /user..")
-    //res.send("This is just an slash page..")
-    next();
+app.post("/signup",async (req,res)=>{
+    const user = new User({
+        firstName:"Ursha",
+        lastName:"Kanol",
+        age:28,
+        gender:"female",
+        city:"Goa",
+        phoneNumber:9874745626,
+    });
+    try{
+        await user.save();
+        res.send("data saved successfull..");
+    }
+    catch(err){
+        res.status(400).send("Data not saved.." +err.message)
+    }
+    
 });
-app.use("/user", (req,res,next)=>{
-    console.log("Handling the routes of /user..")
-    //res.send("This is 2nd response..")
-    next();
-});
-app.use("/user", (req,res)=>{
-    console.log("Handling the routes of /user..")
-    res.send("This is 3rd response..")
+
+connectDB()
+.then(()=>{
+    console.log("Database connection is made successfully..");
+    app.listen(7777,()=>{
+        console.log("Server is successfully running on port 7777.");
+    });
+})
+.catch((err)=>{
+    console.log("Connection unsuccessfull!!" +err.message);
 });
 
 
-app.listen(4000,()=>{
-    console.log("Server is successfully running");
-});
+
+
 
 
