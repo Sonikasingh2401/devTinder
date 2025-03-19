@@ -4,8 +4,12 @@ const app = express();
 const User = require('./models/user');
 const {validateSignUpData} = require('./utils.js/validation')
 const bcrypt = require('bcrypt');
+const cookieParser = require("cookie-parser");
+const jwt = require('jsonwebtoken');
+const { userAuth } = require("./middleware.js/auth");
 
 app.use(express.json());
+app.use(cookieParser());
 
 //To save the data into database 
 app.post("/signup",async (req,res)=>{
@@ -29,15 +33,20 @@ app.post("/signup",async (req,res)=>{
     }
  });
 
- app.post("/login",async(req,res)=>{
+app.post("/login",async(req,res)=>{
     try{
         const {emailId, password} = req.body;
         const user = await User.findOne({emailId: emailId});
         if(!user){
             throw new Error("Invalid login credentials");
         }
-        const isPasswordValid = await bcrypt.compare(password,user.password);
+        const isPasswordValid = await user.validatePassword(password);
         if(isPasswordValid){
+
+            //Create a token
+            const token = await user.getJWT();
+
+            res.cookie("token",token, {expires: new Date(Date.now() + 900000)});
             res.send("Login successfull");
         }else{
             throw new Error ("Invalid login credentials");
@@ -48,23 +57,29 @@ app.post("/signup",async (req,res)=>{
     }
  });
 
-//To Get the data from the database by Gender - male
-
-app.get("/user",async (req,res)=>{
-    const userGender = req.body.gender;
+app.get("/profile", userAuth, async (req,res)=>{
 
     try{
-         const users = await User.find({gender: userGender})
-         if(users.length === 0){
-            res.status(404).send("No male user..")
-         }else{
-            res.send(users);
-         }
+        const user = req.user;
+        res.send(user);
     }
     catch(err){
-        res.status(400).send("Something went wrong" +err.message)
+        res.status(400).send("ERROR : " +err.message);
     }
 });
+
+//sending the connection request
+app.post("/sendConnectionRequest",userAuth, (req,res)=>{
+    
+    const user = req.user;
+    try{
+        res.send(user.firstName + " sent a connection request..")
+    }
+    catch(err){
+        res.status(400).send("Error sending in connection request..");
+    }
+});
+
 
 //Delete a user
 
