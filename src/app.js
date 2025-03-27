@@ -9,10 +9,12 @@ app.use(cookieParser());
 const authRouter = require('./router.js/auth');
 const profileRouter = require('./router.js/profile');
 const requestRouter = require('./router.js/request');
+const userRouter = require('./router.js/user');
 
 app.use('/',authRouter);
 app.use('/',profileRouter);
 app.use('/',requestRouter);
+app.use('/',userRouter);
 
 //Delete a user
 

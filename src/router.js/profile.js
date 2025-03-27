@@ -1,6 +1,5 @@
 const express = require('express');
 const {userAuth} = require('../middleware.js/auth');
-const user = require('../models/user');
 const { validateEditProfileData } = require('../utils.js/validation');
 
 const profileRouter = express.Router();
@@ -38,6 +37,6 @@ profileRouter.patch("/profile/edit",userAuth, async (req,res)=>{
         res.status(400).send("ERROR : " +err.message);
     }
     
-})
+});
 
 module.exports = profileRouter;
