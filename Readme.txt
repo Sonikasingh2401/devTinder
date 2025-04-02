@@ -234,7 +234,8 @@ NOTES:
 
 skip = (page-1)*limit;
 
-
+-----------------------------------------------------------
+## Sample APIs
 
 /*app.get("/user",(req,res)=>{
     console.log(req.query);
